@@ -3,11 +3,27 @@ version: '2'
 services:
 
   owncloud:
-    image: owncloud
+    build: ./nginx/
     ports:
       - 8080:80
     links:
+      - php
+    volumes_from:
+      - app
+
+  php:
+    build: ./php/
+    expose:
+      - 9000
+    links:
       - mysql
+    volumes_from:
+      - app
+  app: 
+    image: php:7.0.5-fpm-alpine
+    volumes:
+      - ./owncloud/:/var/www/html
+    command: "true"  
 
   mysql:
     hostname: mysql
@@ -27,4 +43,3 @@ services:
     volumes:
       - /var/lib/mysql
     command: "true"  
-
